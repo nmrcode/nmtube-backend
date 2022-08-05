@@ -1,5 +1,7 @@
 import {
 	BadRequestException,
+	HttpException,
+	HttpStatus,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
@@ -61,7 +63,11 @@ export class AuthService {
 			select: ['id', 'email', 'password'],
 		});
 
-		if (!user) throw new NotFoundException('Пользователь не найден');
+		if (!user)
+			throw new HttpException(
+				'Пользователь с таким Email существует',
+				HttpStatus.NOT_FOUND,
+			);
 
 		const isValidPassword = await compare(dto.password, user.password);
 
